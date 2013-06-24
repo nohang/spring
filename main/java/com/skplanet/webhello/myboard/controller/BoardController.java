@@ -89,8 +89,9 @@ public class BoardController {
     }
 
     @RequestMapping(value = "/login",method = RequestMethod.POST)
-    private String BoardLogin(HttpServletRequest request, HttpServletResponse response, Model model){
+    private String BoardLogin(HttpServletRequest request, HttpServletResponse response){
         String userid = request.getParameter("userid");
+        String pw = request.getParameter("pw");
         Cookie cookie = new Cookie("userid",userid);
         if(request.getParameter("checked")!=null){
 
@@ -102,8 +103,8 @@ public class BoardController {
             response.addCookie(cookie);
         }
 
-        if(request.getParameter("userid").equals("a") && request.getParameter("pw").equals("b")){
-            System.out.println("1");
+        System.out.println(userService.isAuth(userid,pw));
+        if(userService.isAuth(userid,pw)==true){
             HttpSession session = request.getSession();
             session.setAttribute("userid",userid);
             if(request.getServletContext().getAttribute("connect")==null){
@@ -112,6 +113,8 @@ public class BoardController {
             int connect = (Integer)request.getServletContext().getAttribute("connect")+1;
             request.getServletContext().setAttribute("connect",new Integer(connect));
         }
+
+
         return "redirect:/board/list";
     }
     @RequestMapping(value = "/signUpForm",method = RequestMethod.GET)
@@ -122,9 +125,7 @@ public class BoardController {
     private String BoardSignUp(User user, BindingResult result){
 
         new SignUpValidator().validate(user,result);
-        if(result.hasErrors()){
-            System.out.println("error!!");
-            System.out.println("result = " + result);
+        if(result.hasErrors()||userService.isSignUp(user)==true){
             return "boardSignUp";
         }
         userService.addUser(user);

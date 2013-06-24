@@ -13,6 +13,8 @@ import java.util.List;
  */
 public interface UserService {
     List<User> getUser();
-    void addUser(User board);
+    void addUser(User user);
+    boolean isSignUp(User user);
+    boolean isAuth(String id,String pw);
 
 }

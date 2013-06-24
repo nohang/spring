@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -78,7 +79,7 @@ public class UserDBService implements UserService{
             preparedStatement.setString(1,user.getName());
             preparedStatement.setString(2,user.getUserid());
             preparedStatement.setString(3,user.getPw());
-            preparedStatement.setString(4, user.getNickname());
+            preparedStatement.setString(4,user.getNickname());
             preparedStatement.execute();
 
         } catch (ClassNotFoundException e) {
@@ -95,5 +96,31 @@ public class UserDBService implements UserService{
             }
         }
     }
+
+    @Override
+    public boolean isSignUp(User newUser) {
+        List<User> users = getUser();
+        for(Iterator<User> it = users.iterator(); it.hasNext();){
+            User user = it.next();
+            if(user.getUserid().matches(newUser.getUserid())==true){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean isAuth(String id,String pw) {
+        List<User> users = getUser();
+        for(Iterator<User> it = users.iterator(); it.hasNext();){
+            User user = it.next();
+            if(user.getUserid().matches(id)==true && user.getPw().matches(pw)==true){
+                return true;
+            }
+        }
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
 
 }
